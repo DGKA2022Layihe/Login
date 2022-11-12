@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Base32 online decode function">
+    <title>Base32 Decode Online
+    </title>
+    <script>
+      if (location.hostname != 'localhost') {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-44208259-6', 'auto');
+        ga('send', 'pageview');
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  </head>
+  <body>
+    <style>
+         body, html, h1, h2 {
+   margin: 0;
+   padding: 0;
+   font-family: "SF Pro TC","SF Pro Text","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+   color: #333;
+ }
+ 
+ a, a:visited {
+   color: #828282;
+   text-decoration: none;
+ }
+ 
+ a:hover, a.active {
+   color: #4183c4;
+ }
+ 
+ #header {
+   background-color: #2d2d2d;
+   color: white;
+   text-align: center;
+ }
+ 
+ #header a {
+   color: white;
+ }
+ 
+ #body {
+   width: 1024px;
+   margin: 0 60px;
+ }
+ 
+ #body:after {
+   content: '';
+   clear: both;
+   display: block;
+ }
+ 
+ #sidebar:after {
+   content: '';
+   clear: both;
+   display: block;
+ }
+ 
+ .col {
+   width: 50%;
+   float: left;
+ }
+ 
+ .option-block {
+   padding: 5px;
+   border-bottom: 3px dashed #D0CCCC;
+ }
+ 
+ #bits {
+   width:100px;
+ }
+ 
+ .menu {
+   padding: 0;
+   margin: 0;
+ }
+ 
+ .menu li {
+   list-style: none;
+ }
+ 
+ .menu li a, .menu-group {
+   display: block;
+   min-height: 30px;
+   line-height: 30px;
+   padding-left: 20px;
+ }
+ 
+ .menu-group {
+   font-weight: bold;
+ }
+ 
+ .menu li a:hover, .menu li a.active {
+   padding-left: 19px;
+   border-left: 1px solid #828282
+ }
+ 
+ #index:after {
+   content: '';
+   clear: both;
+   display: block;
+ }
+ 
+ #index .menu {
+   float: left;
+   min-width: 200px;
+ }
+ 
+ #main {
+   float: left;
+   width: 70%;
+  }
+ 
+ #main h1 {
+   margin: 10px 0;
+   border-bottom: 1px solid #eee;
+ }
+ 
+ .description {
+   color: gray;
+   margin: 10px 0;
+ }
+ 
+ .submit {
+   height: 60px;
+   line-height: 50px;
+   text-align: center;
+ }
+ 
+ #droppable-zone {
+   border: 10px dashed #ccc;
+   height: 200px;
+   width: 650px;
+   position: relative;
+   overflow: hidden;
+ }
+ 
+ #droppable-zone.hover {
+   border: 10px dashed #aaa;
+ }
+ 
+ #droppable-zone-wrapper {
+   display: table;
+   height: 100%;
+   width: 100%;
+ }
+ 
+ #droppable-zone-text {
+   display: table-cell;
+   text-align: center;
+   vertical-align: middle;
+   font-size: 33px;
+   overflow: hidden;
+ }
+ 
+ .droppable-file {
+   position: absolute;
+   top: 0;
+   left: 0;
+   opacity: 0;
+   height: 100%;
+   width: 100%;
+   cursor: pointer;
+ }
+ 
+ input, textarea {
+   /*font-family:Consolas,'Lucida Console','DejaVu Sans Mono',monospace;*/
+   font-size: 12pt;
+   max-width: 95%;
+   width: 95%;
+   height: 200px;
+   border: 3px double #ccc;
+   -webkit-border-radius: 10px;
+   -moz-border-radius: 10px;
+   border-radius: 10px;
+   background: #e0e0e0; /* Old browsers */
+   background: -moz-linear-gradient(top, #e0e0e0 0%, #ffffff 100%); /* FF3.6+ */
+   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e0e0e0), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+   background: -webkit-linear-gradient(top, #e0e0e0 0%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+   background: -o-linear-gradient(top, #e0e0e0 0%,#ffffff 100%); /* Opera 11.10+ */
+   background: -ms-linear-gradient(top, #e0e0e0 0%,#ffffff 100%); /* IE10+ */
+   background: linear-gradient(to bottom, #e0e0e0 0%,#ffffff 100%); /* W3C */
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e0e0', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+ }
+ 
+ ::-webkit-input-placeholder { 
+   text-align: center;
+   line-height: 200px;
+   font-size: 16pt;
+ }
+ ::-moz-placeholder { 
+   text-align: center;
+   line-height: 200px;
+   font-size: 16pt;
+ }
+ :-ms-input-placeholder{ 
+   text-align: center;
+   line-height: 200px;
+   font-size: 16pt;
+ }
+ 
+ #footer {
+   margin-top: 40px;
+   padding-top: 40px;
+   padding-bottom: 40px;
+   font-size: 12px;
+   line-height: 1.5;
+   color: #777;
+   border-top: 1px solid #eee;
+   text-align: center;
+ }
+ 
+ .btn {
+   display: inline-block;
+   padding: 6px 12px;
+   margin-bottom: 0;
+   font-size: 14px;
+   font-weight: normal;
+   line-height: 1.42857143;
+   text-align: center;
+   white-space: nowrap;
+   vertical-align: middle;
+   -ms-touch-action: manipulation;
+       touch-action: manipulation;
+   cursor: pointer;
+   -webkit-user-select: none;
+      -moz-user-select: none;
+       -ms-user-select: none;
+           user-select: none;
+   background-image: none;
+   border: 1px solid transparent;
+   border-radius: 4px;
+ }
+ .btn:focus,
+ .btn:active:focus,
+ .btn.active:focus,
+ .btn.focus,
+ .btn:active.focus,
+ .btn.active.focus {
+   outline: thin dotted;
+   outline: 5px auto -webkit-focus-ring-color;
+   outline-offset: -2px;
+ }
+ .btn:hover,
+ .btn:focus,
+ .btn.focus {
+   color: #333;
+   text-decoration: none;
+   background-color: rgba(0, 0, 0, .125);
+ }
+ .btn:active,
+ .btn.active {
+   background-image: none;
+   outline: 0;
+   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+           box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+ }
+ .btn.disabled,
+ .btn[disabled],
+ fieldset[disabled] .btn {
+   pointer-events: none;
+   cursor: not-allowed;
+   filter: alpha(opacity=65);
+   -webkit-box-shadow: none;
+           box-shadow: none;
+   opacity: .65;
+ }
+ .btn-default {
+   color: #333;
+   background-color: #fff;
+   border-color: #ccc;
+ }
+ .btn-default:hover,
+ .btn-default:focus,
+ .btn-default.focus,
+ .btn-default:active,
+ .btn-default.active,
+ .open > .dropdown-toggle.btn-default {
+   color: #333;
+   background-color: #e6e6e6;
+   border-color: #adadad;
+ }
+ .navbar-ul{
+  list-style: none;
+  display: flex;
+ }
+ .btn-default:active,
+ .btn-default.active,
+ .open > .dropdown-toggle.btn-default {
+   background-image: none;
+ }
+ .btn-default .badge {
+   color: #fff;
+   background-color: #333;
+ }
+ #sidebar{
+    margin-right: 60px;
+  }
+ @media (max-width: 991px){
+  textarea, input{
+    width: 80%;
+    height: 150px;
+    overflow-y: hidden;
+  }
+  #main{
+    width: 300px;
+  }
+  .navbar-ul{
+    display: block;
+  }
+  .menu{
+    margin-top: 60px;
+  }
+  #sidebar{
+    margin-right: 40px;
+  }
+  }
+  @media (max-width: 575px){
+    textarea, input{
+      width: 75%;
+      height: 120px;
+    }
+    h1{
+      font-size: 18px;
+    }
+    #main{
+      width: 220px;
+    }
+  }
+    </style>
+    <div id="body">
+      <script src="js/main.js"></script>
+      <div id="main">
+        <h1>Base32 Decode
+        </h1>
+        <div class="description">Base32 online decode function
+        </div>
+        <div class="input">
+          <textarea id="input" placeholder="Input"></textarea>
+        </div>
+        <div class="submit">
+          <button class="btn btn-default" id="execute" type="button">Decode</button>
+        </div>
+        <div class="output">
+          <textarea id="output" placeholder="Output"></textarea>
+        </div>
+      </div>
+      <div id="sidebar" style="position: absolute; top: 90px; right: 0;">
+        <div class="col">
+          <ul class="menu">
+            <li>
+              <span class="menu-group">Encryption</span>
+            </li>
+            <li><a href="base32-encode.html">Base32</a></li>
+            <li><a href="reverse.html">Reverse</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="position: absolute; right: 45px; top: 0;" class="navbar">
+        <ul class="navbar-ul">
+           <li style="padding-right: 10px;"><a class="btn btn-outline-light" href="user_page.php">Home</a></li>
+           <li style="padding-right: 10px;"><a class="btn btn-outline-light" href="login_form.php">Login</a></li>
+           <li style="padding-right: 10px;"><a class="btn btn-outline-light" href="register_form.php">Register</a></li>
+           <li style="padding-right: 10px;"><a class="btn btn-outline-light" href="logout.php">Logout</a></li>
+        </ul>
+     </div>
+    </div>
+      <script src="https://cdn.jsdelivr.net/gh/emn178/hi-base32@v0.5.1/build/base32.min.js"></script>
+      <script>method = base32.decode;</script>
+    </div>
+    <div id="footer">&copy; 2015-2017 Online Tools</div>
+  </body>
+</html>
